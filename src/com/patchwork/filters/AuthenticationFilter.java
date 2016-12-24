@@ -50,7 +50,8 @@ public class AuthenticationFilter implements Filter {
 		boolean isLogin = path.startsWith("/Login");
 		boolean isRegister = path.startsWith("/Register");
 		boolean isLoginRequired = path.startsWith("/LoginRequired");
-		if(isLoggedIn || isHome || isHomePlus || isStatic || isLogin || isRegister || isLoginRequired) {
+		boolean isSinglePlayer = path.startsWith("/Play/Single");
+		if(isLoggedIn || isHome || isHomePlus || isStatic || isLogin || isRegister || isLoginRequired || isSinglePlayer) {
 			// pass the request along the filter chain
 			chain.doFilter(request, response);			
 		} else {
