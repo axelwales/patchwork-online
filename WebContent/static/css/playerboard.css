@@ -1,0 +1,27 @@
+.row {
+	margin:0;
+	padding:0;
+}
+.col-xs-4 {
+	padding:0;
+}
+.player-board-container {
+	max-width: 600px;
+	max-height: 600px;
+	margin: 0 auto;
+	position: relative;
+}
+
+.player-board-square {
+	border: 1px solid #ddd;
+}
+
+.player-board-patch {
+	position: absolute;
+	border: 1px solid #6e6e6e;
+	background: red;
+}
+
+.square-occupied {
+	background: #6e6e6e;
+}

@@ -1,0 +1,28 @@
+@CHARSET "ISO-8859-1";
+
+.time-track-container {
+	margin: 0 auto;
+	max-width: 600px;
+}
+
+.time-track-container .col-xs-1 {
+	padding: 0;
+}
+
+.time-track-square {
+	border: 1px solid #ddd;
+	position: relative;
+}
+
+.income-icon {
+	border-radius: 50%;
+	background-color: lightblue;
+}
+.bonus-icon {
+	background-color: saddlebrown;
+}
+.time-track-position {
+	position: absolute;
+	top: 0;
+	right: 0;
+}

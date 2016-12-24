@@ -1,0 +1,21 @@
+@CHARSET "ISO-8859-1";
+
+.patch-list-item {
+	margin:5px 0;
+}
+
+.patch-list-patch-container {
+	position:relative;
+}
+
+.patch-list-patch {
+	position: absolute;
+	border: 1px solid #6e6e6e;
+	background: red;
+}
+
+.patch-list-position {
+	position: absolute;
+	top: 0;
+	left: 0;
+}

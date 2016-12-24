@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+	<!-- Specify a JDBC datasource -->
+	<Resource name="jdbc/patchworkDB" 
+	    auth="Container"
+	    type="javax.sql.DataSource"
+	    factory="org.apache.tomcat.jdbc.pool.DataSourceFactory" 
+	    username="system" 
+	    password="admin"
+	    driverClassName="oracle.jdbc.driver.OracleDriver"
+	    url="jdbc:oracle:thin:@localhost:1521:xe"
+	    autoReconnect="true"
+	    validationQuery="select 1"
+	    maxActive="10" 
+	    maxIdle="10"/>
+          
+	<Realm	className="org.apache.catalina.realm.DataSourceRealm"
+		dataSourceName="jdbc/patchworkDB"
+		localDataSource = "true"
+	    userTable="Users" userNameCol="username" userCredCol="password"
+		userRoleTable="User_Roles" roleNameCol="role" >
+		<CredentialHandler 	className="org.apache.catalina.realm.MessageDigestCredentialHandler"
+			algorithm="md5" 
+			saltLength="16"
+			iterations="1"/>
+	</Realm>
+</Context>
