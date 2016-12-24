@@ -42,15 +42,20 @@ public class GameFilter implements Filter {
 		String pathInfo = req.getPathInfo();
 		Boolean isSubpath = pathInfo.startsWith("/");
 		Boolean isInt = false;
+		Boolean isSingle = false;
 		if(isSubpath) {
 			String gameIdString = pathInfo.substring(1);
 			try {
 				Integer.parseInt(gameIdString);
 				isInt = true;
-			} catch (NumberFormatException e) {}
+			} catch (NumberFormatException e) {
+				if(pathInfo.equalsIgnoreCase("/Single")) {
+					isSingle = true;
+				}
+			}
 		}
 		// pass the request along the filter chain
-		if( (isSubpath && isInt) )
+		if( isSubpath && (isInt || isSingle) )
 			chain.doFilter(request, response);
 		else
 			res.sendRedirect(req.getContextPath());
