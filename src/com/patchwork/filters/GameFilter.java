@@ -48,10 +48,10 @@ public class GameFilter implements Filter {
 			try {
 				Integer.parseInt(gameIdString);
 				isInt = true;
-			} catch (NumberFormatException e) {
-				if(pathInfo.equalsIgnoreCase("/Single")) {
-					isSingle = true;
-				}
+			} catch (NumberFormatException e) {}
+			
+			if(pathInfo.equalsIgnoreCase("/Single")) {
+				isSingle = true;
 			}
 		}
 		// pass the request along the filter chain

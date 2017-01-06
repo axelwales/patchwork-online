@@ -102,11 +102,9 @@ public class GameServlet extends HttpServlet {
 			default:
 				break;
 		}
-	}	
+	}
 	
-	private void processPlayRequest(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
-		RequestDispatcher d = null;
+	private Game[] getGames(HttpServletRequest request) {
 		Game[] games = null;
 		String pathInfo = request.getPathInfo();
 		String idString = pathInfo.substring(1);
@@ -114,6 +112,15 @@ public class GameServlet extends HttpServlet {
 			Long id = Long.parseLong(idString);
 			games = GameLoader.getGames(request.getUserPrincipal().getName(), id);
 		} catch (NumberFormatException e) {e.printStackTrace();}
+		return games;
+	}
+	
+	private void processPlayRequest(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		RequestDispatcher d = null;
+		
+		Game[] games = getGames(request);
+		
 		if(games != null) {
 			Game currentGame = games[0];
 			String commandName = (String) request.getParameter("action");
@@ -121,13 +128,8 @@ public class GameServlet extends HttpServlet {
 			
 			if(commandName != null) {
 				processAction(request, response, currentGame, commandName, commandParams);
-			}
-			else {
-				request.setAttribute("patchid", currentGame.getPatchId());
-				request.setAttribute("game", games[0]);
-				request.setAttribute("constants", GameConstants.gameConstants);
-				d = request.getRequestDispatcher("/WEB-INF/views/play/Play.jsp");
-				d.forward(request, response);
+			} else {
+				forwardToGame( request, response, currentGame );
 			}
 		}
 		else
@@ -249,21 +251,22 @@ public class GameServlet extends HttpServlet {
 	private void forwardToGame(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		RequestDispatcher d = null;
-		Game[] games = null;
-		String pathInfo = request.getPathInfo();
-		String idString = pathInfo.substring(1);
-		try {
-			Long id = Long.parseLong(idString);
-			games = GameLoader.getGames(request.getUserPrincipal().getName(), id);
-		} catch (NumberFormatException e) {e.printStackTrace();}
+		Game[] games = getGames(request);
 		if(games != null) {
-			request.setAttribute("game", games[0]);
-			request.setAttribute("constants", GameConstants.gameConstants);
-			d = request.getRequestDispatcher("/WEB-INF/views/play/Play.jsp");
-			d.forward(request, response);
+			forwardToGame( request, response, games[0] );
 		}
 		else
 			forwardToLobby(request, response);
+	}
+
+	private void forwardToGame(HttpServletRequest request, HttpServletResponse response, Game game) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		RequestDispatcher d = null;
+		request.setAttribute("patchid", game.getPatchId());
+		request.setAttribute("game", game);
+		request.setAttribute("constants", GameConstants.gameConstants);
+		d = request.getRequestDispatcher("/WEB-INF/views/play/Play.jsp");
+		d.forward(request, response);
 	}
 
 	private void forwardToLobby(HttpServletRequest request,
