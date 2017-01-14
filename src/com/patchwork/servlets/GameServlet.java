@@ -11,12 +11,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
+import javax.servlet.http.HttpSession;
 
 import com.patchwork.db.ConnectionManager;
 import com.patchwork.db.GameLoader;
 import com.patchwork.db.InitializeTables;
 import com.patchwork.game.logic.ActionInvoker;
 import com.patchwork.game.logic.Command;
+import com.patchwork.game.logic.StartGame;
 import com.patchwork.game.models.Game;
 import com.patchwork.game.models.GameConstants;
 import com.patchwork.game.models.Player;
@@ -108,28 +110,48 @@ public class GameServlet extends HttpServlet {
 		Game[] games = null;
 		String pathInfo = request.getPathInfo();
 		String idString = pathInfo.substring(1);
-		try {
-			Long id = Long.parseLong(idString);
-			games = GameLoader.getGames(request.getUserPrincipal().getName(), id);
-		} catch (NumberFormatException e) {e.printStackTrace();}
+		if(idString.equalsIgnoreCase("Single")) {
+			HttpSession s = request.getSession();
+			if(s.getAttribute("single") == null) {
+				s.setAttribute("single", createSinglePlayerGame());
+			}
+			else
+				games = new Game[]{ (Game) s.getAttribute("single") };
+		} else {
+			try {
+				Long id = Long.parseLong(idString);
+				games = GameLoader.getGames(request.getUserPrincipal().getName(), id);
+			} catch (NumberFormatException e) {e.printStackTrace();}
+		}
 		return games;
 	}
 	
+	private Game createSinglePlayerGame() {
+		Game result = new Game();
+		Player player = new Player();
+		player.username = "Player";
+		Player computer = new Player();
+		computer.username = "Computer";
+		result.players[0] = player;
+		result.players[1] = computer;
+		//TODO check player.username checks in logic and play view
+		StartGame.startGame(result.state);
+		return result;
+	}
+
 	private void processPlayRequest(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		RequestDispatcher d = null;
 		
 		Game[] games = getGames(request);
 		
 		if(games != null) {
-			Game currentGame = games[0];
 			String commandName = (String) request.getParameter("action");
 			String commandParams = (String) request.getParameter("params");
 			
 			if(commandName != null) {
-				processAction(request, response, currentGame, commandName, commandParams);
+				processAction(request, response, games[0], commandName, commandParams);
 			} else {
-				forwardToGame( request, response, currentGame );
+				forwardToGame( request, response, games[0] );
 			}
 		}
 		else
@@ -250,7 +272,6 @@ public class GameServlet extends HttpServlet {
 
 	private void forwardToGame(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		RequestDispatcher d = null;
 		Game[] games = getGames(request);
 		if(games != null) {
 			forwardToGame( request, response, games[0] );
@@ -260,7 +281,6 @@ public class GameServlet extends HttpServlet {
 	}
 
 	private void forwardToGame(HttpServletRequest request, HttpServletResponse response, Game game) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		RequestDispatcher d = null;
 		request.setAttribute("patchid", game.getPatchId());
 		request.setAttribute("game", game);
