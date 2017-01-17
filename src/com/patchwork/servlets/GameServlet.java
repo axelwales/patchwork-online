@@ -106,14 +106,22 @@ public class GameServlet extends HttpServlet {
 		}
 	}
 	
+	private boolean isPlayer(HttpServletRequest request, Player p) {
+		return p.username.equalsIgnoreCase(request.getUserPrincipal().getName()) || p.username.equals("Player");
+	}
+	
+	private boolean isCurrentPlayer(HttpServletRequest request, Game g) {
+		return g.state.currentPlayer.username.equalsIgnoreCase(request.getUserPrincipal().getName()) || g.state.currentPlayer.username.equalsIgnoreCase("Player");
+	}
+	
 	private Game[] getGames(HttpServletRequest request) {
 		Game[] games = null;
 		String pathInfo = request.getPathInfo();
 		String idString = pathInfo.substring(1);
 		if(idString.equalsIgnoreCase("Single")) {
-			HttpSession s = request.getSession();
+			HttpSession s = request.getSession(true);
 			if(s.getAttribute("single") == null) {
-				s.setAttribute("single", createSinglePlayerGame());
+				s.setAttribute("single", createSinglePlayerGame(request));
 			}
 			else
 				games = new Game[]{ (Game) s.getAttribute("single") };
@@ -126,15 +134,17 @@ public class GameServlet extends HttpServlet {
 		return games;
 	}
 	
-	private Game createSinglePlayerGame() {
+	private Game createSinglePlayerGame(HttpServletRequest request) {
 		Game result = new Game();
 		Player player = new Player();
-		player.username = "Player";
+		if(request.getUserPrincipal() != null)
+			player.username = request.getUserPrincipal().getName();
+		else
+			player.username = "Player";
 		Player computer = new Player();
 		computer.username = "Computer";
 		result.players[0] = player;
 		result.players[1] = computer;
-		//TODO check player.username checks in logic and play view
 		StartGame.startGame(result.state);
 		return result;
 	}
@@ -165,11 +175,12 @@ public class GameServlet extends HttpServlet {
         
 		if("ai".equalsIgnoreCase(commandName)) {
 			for(Player p : currentGame.players) {
-				if(p.username.equalsIgnoreCase(request.getUserPrincipal().getName()))
+				if(isPlayer(request,p)) {
 					if(p.isAI == 0) {
 						p.isAI = 1;
 						GameLoader.updateGame(currentGame);
 					}
+				}
 			}
 			Command c = PatchworkMCTS.getCommand(currentGame);
 				
@@ -199,7 +210,7 @@ public class GameServlet extends HttpServlet {
 		}
 		else {
 			Boolean update = false;
-			if(currentGame.state.currentPlayer.username.equalsIgnoreCase(request.getUserPrincipal().getName()))
+			if(isCurrentPlayer(request,currentGame))
 				update = ActionInvoker.sendCommand(currentGame.state,  commandName, commandParams);
 			String jsonResult = "";
 			if(update) {
@@ -218,7 +229,7 @@ public class GameServlet extends HttpServlet {
 					String patchList = wr.toString();
 					
 					for(Player p : currentGame.players) {
-						if(p.username.equalsIgnoreCase(request.getUserPrincipal().getName()))
+						if(isPlayer(request,p))
 							request.setAttribute("player", p);
 					}
 					wr = getResponseWrapper(response);
@@ -236,7 +247,7 @@ public class GameServlet extends HttpServlet {
 					String clientVar = wr.toString();
 					
 					for(Player p : currentGame.players) {
-						if(p.username.equalsIgnoreCase(request.getUserPrincipal().getName()))
+						if(isPlayer(request,p))
 							request.setAttribute("player", p);
 					}
 					wr = getResponseWrapper(response);
