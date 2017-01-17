@@ -4,11 +4,11 @@
 	
 	<c:set var="isCurrentPlayer" value="false" />
 	<c:forEach items="${ game.players }" var="player" > 
-		<c:if test="${ player.username == pageContext.request.userPrincipal.name }" >
+		<c:if test="${ player.username == pageContext.request.userPrincipal.name || player.username eq 'Player' }" >
 			<c:set var="isAI" value="${player.isAI == 1}" />
-		</c:if>
-		<c:if test="${ player.currentPlayer && player.username == pageContext.request.userPrincipal.name }" >
-			<c:set var="isCurrentPlayer" value="true" />
+			<c:if test="${ player.currentPlayer }" >
+				<c:set var="isCurrentPlayer" value="true" />
+			</c:if>
 		</c:if>
 	</c:forEach>
 	

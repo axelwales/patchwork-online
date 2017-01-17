@@ -7,7 +7,7 @@
 		</div>
 		<c:set var="hasJoined" value="false" scope="request"></c:set>
 		<c:forEach items="${listItem.players}" var="player">
-		<c:if test="${player.username eq pageContext.request.userPrincipal.name}">
+		<c:if test="${player.username eq pageContext.request.userPrincipal.name || player.username eq 'Player' }">
 			<c:set var="hasJoined" value="true" scope="request"></c:set>
 		</c:if>
 		<div class="col-xs-6">
