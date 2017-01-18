@@ -123,8 +123,7 @@ public class GameServlet extends HttpServlet {
 			if(s.getAttribute("single") == null) {
 				s.setAttribute("single", createSinglePlayerGame(request));
 			}
-			else
-				games = new Game[]{ (Game) s.getAttribute("single") };
+			games = new Game[]{ (Game) s.getAttribute("single") };
 		} else {
 			try {
 				Long id = Long.parseLong(idString);
