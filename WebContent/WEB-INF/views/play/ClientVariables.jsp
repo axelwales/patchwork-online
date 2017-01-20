@@ -2,6 +2,8 @@
 <div id="game-variables">
 	<div id="json-url" data-json-url="<c:out value="${ pageContext.request.contextPath }"/>/JSON"></div>
 	
+	<div data-single-player="<c:out value='${ game.isSinglePlayer }' />"> </div>
+	
 	<c:set var="isCurrentPlayer" value="false" />
 	<c:forEach items="${ game.players }" var="player" > 
 		<c:if test="${ player.username == pageContext.request.userPrincipal.name || player.username eq 'Player' }" >

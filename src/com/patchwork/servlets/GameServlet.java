@@ -144,6 +144,7 @@ public class GameServlet extends HttpServlet {
 		computer.username = "Computer";
 		result.players[0] = player;
 		result.players[1] = computer;
+		result.isSinglePlayer = true;
 		StartGame.startGame(result.state);
 		return result;
 	}

@@ -48,6 +48,11 @@ public class Game {
 	public int getIscomplete() {
 		return iscomplete;
 	}
+	
+	public boolean isSinglePlayer;
+	public boolean getIsSinglePlayer() {
+		return isSinglePlayer;
+	}
 
 	public Game() {
 		state = new GameState(this);
