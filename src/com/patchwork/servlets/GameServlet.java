@@ -256,7 +256,7 @@ public class GameServlet extends HttpServlet {
 					
 					jsonResult = ActionJSON.placeSuccess(clientVar, playerBoard); 
 				}
-				
+			
 			} else
 				jsonResult = ActionJSON.actionFailure(); 
 			PrintWriter out = response.getWriter();
