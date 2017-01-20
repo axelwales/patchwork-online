@@ -15,7 +15,13 @@ $(function() {
 			}
 		}
 		else {
-			doPoll($("#current-player-boolean").data("current-player-name"));
+			if ($("#single-player-boolean").data("single-player") == true) {
+				var action = "ai";
+				var params = '';
+				actionAJAX(action,params);
+			}
+			else
+				doPoll($("#current-player-boolean").data("current-player-name"));
 		}
 	}
 });
