@@ -62,7 +62,7 @@ public class GameState {
 		int j;
 		Object temp;
 		for( int i = toShuffle.length - 1; i > 0; i-- ) {
-			j = r.nextInt(i);
+			j = r.nextInt(i+1);
 			temp = toShuffle[j];
 			toShuffle[j] = toShuffle[i];
 			toShuffle[i] = temp;
