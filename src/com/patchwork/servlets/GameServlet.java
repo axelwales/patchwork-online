@@ -107,11 +107,17 @@ public class GameServlet extends HttpServlet {
 	}
 	
 	private boolean isPlayer(HttpServletRequest request, Player p) {
-		return p.username.equalsIgnoreCase(request.getUserPrincipal().getName()) || p.username.equals("Player");
+		if( request.getUserPrincipal() == null )
+			return p.username.equals("Player");
+		else
+			return p.username.equalsIgnoreCase(request.getUserPrincipal().getName());
 	}
 	
 	private boolean isCurrentPlayer(HttpServletRequest request, Game g) {
-		return g.state.currentPlayer.username.equalsIgnoreCase(request.getUserPrincipal().getName()) || g.state.currentPlayer.username.equalsIgnoreCase("Player");
+		if ( g.isSinglePlayer )
+			return true;
+		else
+			return g.state.currentPlayer.username.equalsIgnoreCase(request.getUserPrincipal().getName());
 	}
 	
 	private Game[] getGames(HttpServletRequest request) {
@@ -136,12 +142,12 @@ public class GameServlet extends HttpServlet {
 	private Game createSinglePlayerGame(HttpServletRequest request) {
 		Game result = new Game();
 		Player player = new Player();
-		if(request.getUserPrincipal() != null)
-			player.username = request.getUserPrincipal().getName();
-		else
-			player.username = "Player";
+		player.username = "Player";
+		player.id = 0;
 		Player computer = new Player();
 		computer.username = "Computer";
+		computer.id = 1;
+		computer.isAI = 1;
 		result.players[0] = player;
 		result.players[1] = computer;
 		result.isSinglePlayer = true;
@@ -175,12 +181,13 @@ public class GameServlet extends HttpServlet {
         
 		if("ai".equalsIgnoreCase(commandName)) {
 			for(Player p : currentGame.players) {
-				if(isPlayer(request,p)) {
+				if(isPlayer(request,p) && currentGame.isSinglePlayer == false) {
 					if(p.isAI == 0) {
-						p.isAI = 1;
+						p.isAI = 1;						
 						GameLoader.updateGame(currentGame);
 					}
 				}
+				//else if( true );
 			}
 			Command c = PatchworkMCTS.getCommand(currentGame);
 				
@@ -210,11 +217,18 @@ public class GameServlet extends HttpServlet {
 		}
 		else {
 			Boolean update = false;
-			if(isCurrentPlayer(request,currentGame))
+			Player updatedPlayer = null;
+			if(isCurrentPlayer(request,currentGame)) {
+				for(Player p : currentGame.players) {
+					if(p.currentPlayer == true)
+						updatedPlayer = p;
+				}
 				update = ActionInvoker.sendCommand(currentGame.state,  commandName, commandParams);
+			}
 			String jsonResult = "";
 			if(update) {
-				GameLoader.updateGame(currentGame);
+				if(currentGame.isSinglePlayer == false)
+					GameLoader.updateGame(currentGame);
 				HttpServletResponseWrapper wr;
 				if("choose".equalsIgnoreCase(commandName)) {
 					request.setAttribute("game", currentGame);
@@ -228,15 +242,17 @@ public class GameServlet extends HttpServlet {
 					request.getRequestDispatcher("/WEB-INF/views/play/PatchList.jsp").include(request, wr);
 					String patchList = wr.toString();
 					
-					for(Player p : currentGame.players) {
-						if(isPlayer(request,p))
-							request.setAttribute("player", p);
-					}
+					request.setAttribute("constants", GameConstants.gameConstants);
+					wr = getResponseWrapper(response);
+					request.getRequestDispatcher("/WEB-INF/views/play/TimeTrack.jsp").include(request, wr);
+					String timeTrack = wr.toString();
+					
+					request.setAttribute("player", updatedPlayer);
 					wr = getResponseWrapper(response);
 					request.getRequestDispatcher("/WEB-INF/views/play/PlayerStats.jsp").include(request, wr);
 					String playerStats = wr.toString();
 					
-					jsonResult = ActionJSON.chooseSuccess(clientVar, patchList, playerStats);
+					jsonResult = ActionJSON.chooseSuccess(clientVar, patchList, timeTrack, playerStats);
 					
 				} else if("place".equalsIgnoreCase(commandName)) {
 					request.setAttribute("game", currentGame);
@@ -246,10 +262,7 @@ public class GameServlet extends HttpServlet {
 					request.getRequestDispatcher("/WEB-INF/views/play/ClientVariables.jsp").include(request, wr);
 					String clientVar = wr.toString();
 					
-					for(Player p : currentGame.players) {
-						if(isPlayer(request,p))
-							request.setAttribute("player", p);
-					}
+					request.setAttribute("player", updatedPlayer);
 					wr = getResponseWrapper(response);
 					request.getRequestDispatcher("/WEB-INF/views/play/PlayerBoard.jsp").include(request, wr);
 					String playerBoard = wr.toString();
