@@ -44,7 +44,6 @@ public class Choose extends Command {
 	}
 
 	private boolean canPlace(Patch p, GameState state) {
-		// TODO Auto-generated method stub
 		Command place = new Place(this.action);
 		place.parameters.put("patch", p.staticId);
 		LinkedList<Command> possibilities = place.getPossibleCommands(state);
