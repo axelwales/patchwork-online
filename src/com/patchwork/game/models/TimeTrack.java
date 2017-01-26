@@ -54,7 +54,9 @@ public class TimeTrack {
 				result++;
 				bonusClaimed[i] = 1;
 				if( i != bonuses.length - 1)
-					nextUnclaimed = bonuses[i+1];				
+					nextUnclaimed = bonuses[i+1];
+				else
+					nextUnclaimed = 54;
 			}
 		}
 		return result;

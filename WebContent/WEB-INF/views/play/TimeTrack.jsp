@@ -5,8 +5,7 @@
 <c:set var="bonuses" value="${requestScope.constants.bonuses}" scope="request"/>
 <c:set var="incomeOrBonus" value="" scope="request"/>
 <c:set var="playerMarker" value="" scope="request"/>
-<div class="row">
-<div class="col-xs-12">
+
 	<div class="time-track-container">
 		<c:forEach begin="0" end="53" varStatus="i">
 			<c:forEach items="${game.players}" var="player" >
@@ -27,5 +26,3 @@
 			</div>
 		</c:forEach>
 	</div><!-- end .time-track-container -->
-</div>
-</div>
