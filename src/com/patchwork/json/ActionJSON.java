@@ -7,10 +7,11 @@ import com.patchwork.game.logic.Command;
 public class ActionJSON {
 
 	@SuppressWarnings("unchecked")
-	public static String chooseSuccess(String clientVar, String patchList, String playerStats) {
+	public static String chooseSuccess(String clientVar, String patchList, String timeTrack, String playerStats) {
 		JSONObject result = basicSuccess();
 		result.put("client", clientVar);
 		result.put("patches", patchList);
+		result.put("time", timeTrack);
 		result.put("stats", playerStats);
 		return result.toJSONString();
 	}

@@ -28,9 +28,13 @@
     </div>
   </c:forEach>
   <div role="tabpanel" class="tab-pane" id="timetrack">
-  	<%@ include file="/WEB-INF/views/play/TimeTrack.jsp" %>
+    <div class="row">
+	  <div class="col-xs-12">
+  	    <%@ include file="/WEB-INF/views/play/TimeTrack.jsp" %>
+  	  </div>
+	</div>
   </div>
-   <div role="tabpanel" class="tab-pane" id="mcts">
+  <div role="tabpanel" class="tab-pane" id="mcts">
   	<%@ include file="/WEB-INF/views/play/MCTSTree.jsp" %>
   </div>
 </div>

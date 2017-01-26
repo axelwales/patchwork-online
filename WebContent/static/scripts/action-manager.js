@@ -16,12 +16,15 @@ $(function() {
 		}
 		else {
 			if ($("#single-player-boolean").data("single-player") == true) {
+				console.log("Single Player!");
 				var action = "ai";
 				var params = '';
 				actionAJAX(action,params);
 			}
-			else
+			else {
+				console.log("Not Single Player!");
 				doPoll($("#current-player-boolean").data("current-player-name"));
+			}
 		}
 	}
 });
@@ -74,7 +77,11 @@ function showActions() {
 	var actionSelector = '.' + action + '-commands';
 	if ($("#current-player-boolean").data("current-player") == true) {
 		if(action == 'place') {
-			$(actionSelector + '.current-player').not('[data-current-player=false]').toggleClass('show');
+			$(actionSelector + '.current-player').each(function() {
+				if($(this).data('current-player') == true ) {
+					$(this).toggleClass('show');
+				}
+			});
 		}
 		else
 			$(actionSelector + '.current-player').toggleClass('show');
@@ -185,18 +192,34 @@ function updateAll(username) {
 
 function updateGame(action, params, htmlData) {
 	if(action == "choose" || action == "place") {
-		$('#game-variables').replaceWith(htmlData.client);
 		var user = $('#current-player-boolean').data('current-player-name');
+		$('#game-variables').replaceWith(htmlData.client); //updates current player variables
+		var nextUser = $('#current-player-boolean').data('current-player-name');
 		if (action == "choose") {
 			$('#choose-buttons-container').parent().remove();
 			$('.update-choose').replaceWith(htmlData.patches);
+			$('.time-track-container').replaceWith(htmlData.time);
 			$('.update-player-board[data-username='+user+'] .player-stats').replaceWith(htmlData.stats);
+			showTimeTrack();
 			createPatchList(globals.patchlist);
 			addPlayerPatch(globals.patchlist);
-		}
-		else if (action == "place") {
+		} else if (action == "place") {
 			$('.update-player-board[data-username='+user+']').replaceWith(htmlData.board);
 			showPlayerBoard();
+		}
+		
+		if ($("#single-player-boolean").data("single-player") == true) {
+			if(nextUser != user) {
+				$('.update-player-board[data-username='+user+'] .player-stats').data('current-player', false);
+				$('.update-player-board[data-username='+user+'] .player-board-container').data('current-player', false);
+				$('.update-player-board[data-username='+user+'] .player-actions').data('current-player', false);
+				$('.update-player-board[data-username='+user+'] .player-stats-current-player').text('current player: false');
+				
+				$('.update-player-board[data-username='+nextUser+'] .player-stats').data('current-player', true);
+				$('.update-player-board[data-username='+nextUser+'] .player-board-container').data('current-player', true);
+				$('.update-player-board[data-username='+nextUser+'] .player-actions').data('current-player', true);
+				$('.update-player-board[data-username='+nextUser+'] .player-stats-current-player').text('current player: true');
+			}
 		}
 		
 		if($("#current-player-boolean").data("current-player") == true) {
@@ -206,14 +229,17 @@ function updateGame(action, params, htmlData) {
 				var params = '';
 				actionAJAX(name,params);
 			}
-		}
-		else {
+		} else {
 			hideActions();
-			doPoll($('#current-player-boolean').data('current-player-name'));
+			if ($("#single-player-boolean").data("single-player") == false) 
+				doPoll($('#current-player-boolean').data('current-player-name'));
+			else {
+				var name = "ai";
+				var params = '';
+				actionAJAX(name,params);
+			}
 		}
-		if($("#current-action-variable").data("game-over") == false) {
-			updateAll(username);
-		}
+
 	} else if (action == "ai") {
 		actionAJAX(htmlData.commandName,htmlData.commandParams);
 	}

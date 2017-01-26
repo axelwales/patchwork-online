@@ -5,7 +5,11 @@
 	<div id="single-player-boolean" data-single-player="<c:out value='${ game.isSinglePlayer }' />"> </div>
 	
 	<c:set var="isCurrentPlayer" value="false" />
-	<c:forEach items="${ game.players }" var="player" > 
+	<c:set var="playerName" value="" />
+	<c:forEach items="${ game.players }" var="player" >
+		<c:if test="${ player.currentPlayer }" >
+			<c:set var="playerName" value="${player.username}" />
+		</c:if>
 		<c:if test="${ player.username == pageContext.request.userPrincipal.name || player.username eq 'Player' }" >
 			<c:set var="isAI" value="${player.isAI == 1}" />
 			<c:if test="${ player.currentPlayer }" >
@@ -14,7 +18,7 @@
 		</c:if>
 	</c:forEach>
 	
-	<div id="current-player-boolean" data-current-player="<c:out value="${ isCurrentPlayer }"/>" data-current-player-ai="<c:out value="${ isAI }"/>" data-current-player-name="<c:out value="${ pageContext.request.userPrincipal.name }"/>"></div>
+	<div id="current-player-boolean" data-current-player="<c:out value="${ isCurrentPlayer }"/>" data-current-player-ai="<c:out value="${ isAI }"/>" data-current-player-name="<c:out value="${ playerName }"/>"></div>
 	
 	<c:set var="action" value="" />
 	<c:set var="patch-variable" value="" />
