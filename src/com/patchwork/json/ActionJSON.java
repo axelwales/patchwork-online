@@ -15,6 +15,10 @@ public class ActionJSON {
 		result.put("stats", playerStats);
 		return result.toJSONString();
 	}
+	
+	public static String newGameSuccess() {
+		return basicSuccess().toJSONString();
+	}
 
 	@SuppressWarnings("unchecked")
 	private static JSONObject basicSuccess() {

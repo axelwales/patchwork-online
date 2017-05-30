@@ -60,7 +60,10 @@ public class Choose extends Command {
 		if(choice != 3) {
 			Patch patch = state.patches.choose(choice);
 			action.player.buttons -= patch.cost;
-			action.player.position += patch.time;
+			if(action.player.position + patch.time > 53)
+				action.player.position = 53;
+			else
+				action.player.position += patch.time;
 			action.player.income += patch.income;
 			
 			numBonuses = state.track.getBonuses(action.player.position - patch.time, action.player.position);

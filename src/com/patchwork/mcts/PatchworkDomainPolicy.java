@@ -63,7 +63,7 @@ public class PatchworkDomainPolicy implements DomainPolicy{
 		result.parent = parent;
 		if(parent != null && appendNode == true)
 			parent.children.add(result);
-		visualTree.add(result, appendNode);
+		visualTree.updateTree(result, true, appendNode);
 		return result;
 	}
 
@@ -118,6 +118,7 @@ public class PatchworkDomainPolicy implements DomainPolicy{
 	@Override
 	public void updateState(MCTSNode node) {
 		doAction((PatchworkAction)node.action);
+		visualTree.updateTree((PatchworkNode)node, false, true);
 	}
 
 	@Override

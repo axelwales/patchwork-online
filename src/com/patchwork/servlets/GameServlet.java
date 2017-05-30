@@ -214,6 +214,15 @@ public class GameServlet extends HttpServlet {
 			
 			PrintWriter out = response.getWriter();
 			out.print(jsonResult);
+		} else if("newgame".equalsIgnoreCase(commandName)) {
+			if(currentGame.isSinglePlayer) {
+				HttpSession s = request.getSession(true);
+				s.setAttribute("single", createSinglePlayerGame(request));
+			}
+			String jsonResult = ActionJSON.newGameSuccess();
+			
+			PrintWriter out = response.getWriter();
+			out.print(jsonResult);
 		}
 		else {
 			Boolean update = false;

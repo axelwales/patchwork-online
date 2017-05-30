@@ -36,13 +36,25 @@ $( "body" ).on("patchesLoaded", function(event) {
 function addPlayerPatch(json) {
 	var id = $("#current-action-variable").data('patch-id');
 	if(id != -1) {
+		var patchElements = $('.player-board-patch');
 		var isCurrentPlayer = $("#current-player-boolean").data("current-player");
-		if(isCurrentPlayer == true) {
-	    	var patch = new tile(json["p" + id].map, "p" + id);
-	    	globals.boardPatch = patch;
-	    	$(".player-board-container").each(function() {
-	    		var dimension = $(this).outerWidth()/9;
-	    		if( $(this).data('current-player') == true ) {
+		var hasVisiblePatch = patchElements.length != 0 && patchElements.width() != 0;
+		if(isCurrentPlayer == true && !hasVisiblePatch) {
+			var patch = null;
+			if(globals.boardPatch != null && patchElements.length != 0 && patchElements.width() == 0) {
+				patch = globals.boardPatch;
+				patch.remove();
+			} else {
+				patch = new tile(json["p" + id].map, "p" + id);
+				globals.boardPatch = patch;
+			}
+	    	var playerBoards = $(".player-board-container");
+	    	var widths = playerBoards.map(function(i, board) {
+	            return $(board).outerWidth();
+	    	});
+	    	var dimension = Math.max.apply(Math, widths)/9;
+	    	playerBoards.each(function() {
+	    		if( $(this).data('current-player') == true  ) {
 		    		patch.display($(this), 'player-board-patch',dimension,dimension,true);
 		    	}
 	    	});
@@ -148,7 +160,8 @@ function tile(map, name) {
 		var boxHeight = ((9 - (y - this.minY())) - boxTop)*this.height;
 		var cssId = x + '-' + y + '-containment-box';
 		var box = $("<div></div>", {
-			id: cssId
+			id: cssId,
+			class: 'patch-containment-box'
 		});
 		box.css({
 			position: 'absolute',
@@ -248,6 +261,10 @@ function tile(map, name) {
     	this.createContainmentBox(target, newX, newY, false);
     	$('#' + oldX + '-' + oldY + '-containment-box').remove();
     },
+    this.remove = function() {
+    	$('.' + this.classString).remove();
+    	$('.patch-containment-box').remove();
+    }
     this.minX = function() {
       var xOffsets = $.map(this.currentMap, function(point) {
         return point[0];

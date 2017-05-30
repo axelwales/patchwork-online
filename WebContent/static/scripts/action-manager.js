@@ -63,7 +63,28 @@ function displayScores() {
 		  modal: true,
 		  draggable: false,
 		  resizable: false,
-		  closeText: "Back to Game"
+		  closeText: "Back to Game",
+		  buttons: [{
+		              text: "New Game",
+		              click: function() {
+		            	  $.ajax({
+		            		  type: "POST",
+		            		  url: '',
+		            		  data: {"action":"newgame"},
+		            		  error: function(jqXHR, textStatus, errorThrown){
+		            	          console.log("Error: " + textStatus);
+		            	          console.log(jqXHR);
+		            	      },
+		            	      success:function(data){
+		            	          console.log(data);
+		            	          if(data.success == true) {
+		            	        	  location.reload();
+		            	          }
+		            	      },
+		            		  dataType: 'json'
+		            		});
+		              }
+		           }]
 	});
 }
 
