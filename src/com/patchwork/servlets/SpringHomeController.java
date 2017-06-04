@@ -8,6 +8,6 @@ public class SpringHomeController {
 	
 	@RequestMapping("/spring")
 	public String spring() {
-		return "HomeSpring";
+		return "thymeleaf/Home";
 	}
 }

@@ -1,0 +1,14 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title th:text="${title}"></title>
+	<link th:href="@{/static/css/bootstrap.css}" rel="stylesheet" type="text/css">
+	<link th:href="@{/static/css/jquery-ui.css}" rel="stylesheet" type="text/css">
+	<link th:href="@{/static/css/site.css}" rel="stylesheet" type="text/css">
+	<link th:each="link : ${links}" th:href="@{/static/css/${link}.css}" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+  <div th:replace="thymeleaf/shared/NavBar"></div>
+  <div id="content">

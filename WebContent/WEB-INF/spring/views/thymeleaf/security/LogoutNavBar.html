@@ -1,0 +1,11 @@
+<form class="navbar-form navbar-right" action='@{/Logout}' method="POST">	
+   <div class="form-group">
+      <!-- Button -->      
+     <div class="col-xs-11">
+        <button class="btn btn-success">Logout</button>
+     </div>
+   </div>
+</form>
+<p class="navbar-text navbar-right">
+	Hello, <span th:text="${#request.userPrincipal.name}"></span>!
+</p>

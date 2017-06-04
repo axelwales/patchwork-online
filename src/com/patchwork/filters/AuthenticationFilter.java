@@ -42,8 +42,8 @@ public class AuthenticationFilter implements Filter {
 		
 		Principal user = req.getUserPrincipal();
 		boolean isLoggedIn = user != null;
-		boolean isHome = req.getRequestURI().equals(req.getContextPath());
-		boolean isHomePlus = req.getRequestURI().equals(req.getContextPath() + "/");
+		boolean isHome = req.getRequestURI().equals(req.getContextPath())
+					|| req.getRequestURI().equals(req.getContextPath() + "/");
 		
 		String path = req.getRequestURI().substring(req.getContextPath().length());
 		boolean isStatic = path.startsWith("/static");
@@ -52,7 +52,10 @@ public class AuthenticationFilter implements Filter {
 		boolean isLoginRequired = path.startsWith("/LoginRequired");
 		boolean isSinglePlayer = path.startsWith("/Play/Single");
 		boolean isJSON = path.startsWith("/JSON");
-		if( isJSON || isLoggedIn || isHome || isHomePlus || isStatic || isLogin || isRegister || isLoginRequired || isSinglePlayer) {
+		boolean isSpringHome = path.equalsIgnoreCase("/spring") || path.equalsIgnoreCase("/spring/");
+		boolean isAuthorized = isJSON || isLoggedIn || isHome || isSpringHome
+							|| isStatic || isLogin || isRegister || isLoginRequired || isSinglePlayer;
+		if( isAuthorized ) {
 			// pass the request along the filter chain
 			chain.doFilter(request, response);			
 		} else {
